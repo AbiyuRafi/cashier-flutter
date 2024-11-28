@@ -82,7 +82,7 @@ String formatPrice(int price) {
     });
   }
 
-  void updateCart(Map<String, dynamic> product, bool isAdding) {
+ void updateCart(Map<String, dynamic> product, bool isAdding) {
     setState(() {
       if (isAdding) {
         if (product['stock'] > 0) {
@@ -92,11 +92,13 @@ String formatPrice(int price) {
             selectedItems.add(product);
           }
         } else {
+          // Menampilkan snackbar jika stok habis
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${product['name']} stok habis')),
           );
         }
       } else {
+        // Logika pengurangan jumlah
         if (product['quantity'] > 0) {
           product['quantity']--;
           product['stock']++;
@@ -282,41 +284,47 @@ String formatPrice(int price) {
                           ),
                           child: Row(
                             children: [
-                              GestureDetector(
-                                onTap: () => updateCart(product, false),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 6),
-                                  child: const Icon(Icons.remove,
-                                      color: Colors.black, size: 18),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  border: Border.symmetric(
-                                    vertical:
-                                        BorderSide(color: Colors.grey.shade300),
+                              if (product['quantity'] > 0)
+                                GestureDetector(
+                                  onTap: () => updateCart(product,
+                                      false), // Fungsi untuk mengurangi jumlah
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 6),
+                                    child: const Icon(Icons.remove,
+                                        color: Colors.black, size: 18),
                                   ),
                                 ),
-                                child: Text(
-                                  '${product['quantity']}',
-                                  style: const TextStyle(
-                                      fontSize: 14, color: Colors.black),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => updateCart(product, true),
-                                child: Padding(
+                              if (product['quantity'] > 0)
+                                Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 6),
-                                  child: const Icon(Icons.add,
-                                      color: Colors.black, size: 18),
+                                      horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.symmetric(
+                                      vertical: BorderSide(
+                                          color: Colors.grey.shade300),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '${product['quantity']}', // Menampilkan jumlah produk
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
                                 ),
-                              ),
+                              if (product['stock'] > 0) // Cek stok produk
+                                GestureDetector(
+                                  onTap: () => updateCart(product,
+                                      true), // Fungsi untuk menambah jumlah
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 6),
+                                    child: const Icon(Icons.add,
+                                        color: Colors.black, size: 18),
+                                  ),
+                                ),
                             ],
                           ),
+
                         ),
                       ),
                     ],
